@@ -6,13 +6,13 @@ from dramatiq.results.backends import RedisBackend
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
 from settings import POSTGRES_URL_FIRST, POSTGRES_URL_SECOND, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import should_retry, update_product_description
+from actors_interface import should_retry, update_product_description, create_link
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from db.crud import add_link, add_product, add_videolink
-from db.models import VideoLink, Link, Product
+from db.crud import add_product
+from db.models import Link, Product, Video
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
@@ -28,11 +28,11 @@ engine_insert = create_engine(POSTGRES_URL_FIRST, pool_pre_ping=True,
 Session_insert = sessionmaker(bind=engine_insert)
 
 
-def is_link(link_id, db_session):
+def is_product(product_id, db_session):
     try:
-        link = db_session.query(Link.link).filter(Link.link == link_id).first()
+        product = db_session.query(Product.domain).filter(Product.domain == product_id).first()
 
-        if link:
+        if product:
             flag = True
         else:
             flag = False
@@ -43,25 +43,22 @@ def is_link(link_id, db_session):
         raise e
 
 
-@dramatiq.actor(queue_name='josef_create_link_josef',
+@dramatiq.actor(queue_name='josef_create_product_josef',
                 store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
-def create_link(video_id):
+def create_product(video_id):
     session_insert = Session_insert()
 
     with Session_select() as session_select:
-        links = session_select.query(Link)\
-                .join(VideoLink, VideoLink.c.link_id == Link.link)\
-                .filter(VideoLink.c.video_id == video_id).all()
-        link_ids = [link.link for link in links]
+        products = session_select.query(Product).join(Product.links, Link.videos).filter(Video.id == video_id).all()
 
-        for link in links:
-            if is_link(link_id=link.link, db_session=session_insert):
-                logging.info(f"Link with id={link.link} ---> exist!!!")
+        for product in products:
+            if is_product(product_id=product.domain, db_session=session_insert):
+                logging.info(f"Product with id={product.domain} ---> exist!!!")
             else:
-                add_link(session_insert.merge(link), db_session_insert=session_insert)
-                logging.info(f"Link with id={link.link} ---> create!!!")
+                add_product(session_insert.merge(product), db_session_insert=session_insert)
+                logging.info(f"Product with id={product.domain} ---> create!!!")
 
-        for link_id in link_ids:
-            add_videolink(video_id=video_id, link_id=link_id, db_session_insert=session_insert)
+                update_product_description.send(product.domain, product.description)
+                create_link.send(video_id)
 
         session_insert.commit()

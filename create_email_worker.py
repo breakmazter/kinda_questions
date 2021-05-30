@@ -27,18 +27,20 @@ Session = sessionmaker(bind=engine)
 
 @dramatiq.actor(queue_name='josef_create_email_josef',
                 store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
-def create_email(video_id):
+def create_email(channel_id):
     session = Session()
 
-    email = session.query(YoutubeVideo.channel_id, YoutubeChannel.description, YoutubeVideo.description)\
-        .join(YoutubeChannel, YoutubeVideo.channel_id == YoutubeChannel.id)\
-        .filter(YoutubeVideo.id == video_id).all()
+    videos_description = session.query(YoutubeVideo.description, YoutubeChannel.description)\
+        .join(YoutubeChannel, YoutubeChannel.id == YoutubeVideo.channel_id)\
+        .filter(YoutubeChannel.id == channel_id).all()
 
-    email_data = {'channel_id': email[0][0],
-                  'channel_description': email[0][1],
-                  'video_description': email[0][2]}
+    for video in videos_description:
 
-    add_email(email_data=email_data, db_session_insert=session)
-    logging.info(f"Email with channel_id={email[0][0]} ---> create!!!")
+        email_data = {'channel_id': channel_id,
+                      'channel_description': video[1],
+                      'video_description': video[0]}
+
+        add_email(email_data=email_data, db_session_insert=session)
+        logging.info(f"Email with channel_id={channel_id} ---> create!!!")
 
     session.commit()

@@ -21,15 +21,15 @@ broker.add_middleware(Results(backend=result_backend))
 dramatiq.set_broker(broker)
 
 
-def get_ids():
+def get_ids(batch):
     with Session() as session:
-        video_ids = session.query(YoutubeVideo.id).filter(YoutubeVideo.description_lang == 'ru').limit(100).all()
+        video_ids = session.query(YoutubeVideo.id).filter(YoutubeVideo.description_lang == 'ru').limit(batch).all()
         for video_id in video_ids:
             create_youtube_video.send(video_id.id)
             print(f"{video_id.id} - yes")
 
 
 if __name__ == '__main__':
-    get_ids()
+    get_ids(100)
 
 # TODO create normal worker relations !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

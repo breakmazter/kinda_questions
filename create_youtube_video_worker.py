@@ -6,7 +6,7 @@ from dramatiq.results.backends import RedisBackend
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
 from settings import POSTGRES_URL_FIRST, POSTGRES_URL_SECOND, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import create_youtube_channel, create_link, create_email, should_retry
+from actors_interface import create_youtube_channel, create_product, should_retry
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -81,8 +81,7 @@ def create_youtube_video(youtube_video_id):
             add_youtube_video(video=youtube_video, db_session_insert=session_insert)
             logging.info(f"YoutubeVideo with id={youtube_video_id} ---> create!!!")
 
-        create_link.send(video.id)
+        create_product.send(video.id)
         create_youtube_channel.send(youtube_video.channel_id)
-        create_email.send(youtube_video_id)
 
         session_insert.commit()

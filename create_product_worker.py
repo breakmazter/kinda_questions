@@ -62,3 +62,6 @@ def create_product(video_id):
                 create_link.send(video_id)
 
         session_insert.commit()
+
+
+create_product("7RjJEGLeBBk")

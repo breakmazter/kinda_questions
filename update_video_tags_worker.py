@@ -4,7 +4,7 @@ from dramatiq.results.backends import RedisBackend
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
 from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import should_retry
+from actors_interface import should_retry, delete_video
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -40,6 +40,9 @@ def update_video_tags(product_domain):
         update_youtube_video(video_id=ind,
                              video_data={'tags': top_words(5, clean_text(des))},
                              db_session_insert=session)
+
+        delete_video.send(ind)
+
         print(f"YoutubeVideo with id={ind} update!!!")
 
     session.commit()

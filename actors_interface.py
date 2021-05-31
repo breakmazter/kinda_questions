@@ -34,6 +34,12 @@ def create_link(video_id):
     pass
 
 
+@dramatiq.actor(queue_name='josef_create_product_josef',
+                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+def create_product(video_id):
+    pass
+
+
 @dramatiq.actor(queue_name='josef_update_product_description_josef',
                 store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
 def update_product_description(product_domain, product_data):
@@ -46,7 +52,13 @@ def update_video_tags(product_domain):
     pass
 
 
+@dramatiq.actor(queue_name='josef_delete_video_josef',
+                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+def delete_video(video_id):
+    pass
+
+
 @dramatiq.actor(queue_name='josef_create_email_josef',
                 store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
-def create_email(video_id):
+def create_email(channel_id):
     pass

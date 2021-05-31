@@ -31,5 +31,3 @@ def get_ids(batch):
 
 if __name__ == '__main__':
     get_ids(100)
-
-# TODO create normal worker relations !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

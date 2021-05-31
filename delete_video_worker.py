@@ -9,8 +9,7 @@ from actors_interface import should_retry
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from db.models import Product, Video, Link
-
+from db.models import Product, Video, Link, YoutubeVideo
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
@@ -46,6 +45,9 @@ def delete_video(video_id):
     session = Session()
 
     if not is_product(video_id=video_id, db_session=session):
-        session.query(Video).filter(Video.id == video_id).delete()
+        session.query(Video)\
+            .join(YoutubeVideo, Video.id == YoutubeVideo.external_id)\
+            .filter(YoutubeVideo.id == video_id).delete()
+
         session.commit()
         print(f"Video with id={video_id} delete!!!")

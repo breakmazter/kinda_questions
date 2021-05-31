@@ -21,13 +21,23 @@ broker.add_middleware(Results(backend=result_backend))
 dramatiq.set_broker(broker)
 
 
-def get_ids(batch):
+def split(arr, size):
+    mass = []
+    while len(arr) > size:
+        pic = arr[:size]
+        mass.append(pic)
+        arr = arr[size:]
+    mass.append(arr)
+    return mass
+
+
+def get_ids(count, batch_size):
     with Session() as session:
-        video_ids = session.query(YoutubeVideo.id).filter(YoutubeVideo.description_lang == 'ru').limit(batch).all()
-        for video_id in video_ids:
-            create_youtube_video.send(video_id.id)
-            print(f"{video_id.id} - yes")
+        video_ids = session.query(YoutubeVideo.id).filter(YoutubeVideo.description_lang == 'ru').limit(count).all()
+
+        for video_id in split(video_ids, batch_size):
+            dramatiq.group([create_youtube_video.message(ind.id) for ind in video_id]).run()
 
 
 if __name__ == '__main__':
-    get_ids(100)
+    get_ids(100, 10)

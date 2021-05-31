@@ -6,13 +6,13 @@ from dramatiq.results.backends import RedisBackend
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
 from settings import POSTGRES_URL_FIRST, POSTGRES_URL_SECOND, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import should_retry, update_product_description
+from actors_interface import should_retry
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from db.crud import add_link, add_product, add_videolink
-from db.models import VideoLink, Link, Product
+from db.crud import add_link, add_videolink
+from db.models import VideoLink, Link
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
@@ -52,16 +52,13 @@ def create_link(video_id):
         links = session_select.query(Link)\
                 .join(VideoLink, VideoLink.c.link_id == Link.link)\
                 .filter(VideoLink.c.video_id == video_id).all()
-        link_ids = [link.link for link in links]
 
         for link in links:
             if is_link(link_id=link.link, db_session=session_insert):
                 logging.info(f"Link with id={link.link} ---> exist!!!")
             else:
                 add_link(session_insert.merge(link), db_session_insert=session_insert)
+                add_videolink(video_id=video_id, link_id=link.link, db_session_insert=session_insert)
                 logging.info(f"Link with id={link.link} ---> create!!!")
-
-        for link_id in link_ids:
-            add_videolink(video_id=video_id, link_id=link_id, db_session_insert=session_insert)
 
         session_insert.commit()

@@ -1,3 +1,4 @@
+# TODO use in the future
 from nltk import word_tokenize
 
 
@@ -7,4 +8,3 @@ def top_words(n, text):
 
     data = {k: text.split().count(k) for k in keys}
     return ', '.join(sorted(data, key=data.get)[::-1][:n])
-

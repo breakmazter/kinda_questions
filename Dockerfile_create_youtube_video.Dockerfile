@@ -15,6 +15,4 @@ RUN python -m pip install --no-cache-dir -U 'dramatiq[rabbitmq, redis]'==1.11.0
 RUN python -m pip install -r create_youtube_video_requirements.txt
 RUN python -m pip install psycopg2-binary==2.8.6
 
-CMD ["cloud_sql_proxy -instances=oximain:us-central1:oc-video-products-clone-3=tcp:5433"]
-
 CMD ["dramatiq", "-p 8", "-t 8", "create_youtube_video_worker", "-Q", "josef_create_youtube_video_josef"]

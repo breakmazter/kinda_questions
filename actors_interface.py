@@ -6,6 +6,7 @@ from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
 from settings import REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, RABBITMQ_URL
 
+
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
 broker.add_middleware(Results(backend=result_backend))
@@ -48,7 +49,7 @@ def update_product_description(product_domain, product_data):
 
 @dramatiq.actor(queue_name='josef_update_video_tags_josef',
                 store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
-def update_video_tags(product_domain):
+def update_video_tags(youtube_video_id):
     pass
 
 

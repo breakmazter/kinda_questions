@@ -1,16 +1,18 @@
+import logging
+
 import dramatiq
 from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
 from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import should_retry, delete_video
+from actors_interface import should_retry
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from db.crud import update_youtube_video
-from db.models import Product, Video, Link, YoutubeVideo
+from db.models import YoutubeVideo
 
 from utils.clean_text import clean_text
 from utils.proccesing_text import top_words
@@ -27,22 +29,17 @@ Session = sessionmaker(bind=engine)
 
 @dramatiq.actor(queue_name='josef_update_video_tags_josef',
                 store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
-def update_video_tags(product_domain):
-    session = Session()
+def update_video_tags(youtube_video_id):
 
-    youtube_videos = session.query(YoutubeVideo.id, YoutubeVideo.description) \
-        .join(Video, Video.id == YoutubeVideo.external_id) \
-        .join(Video.links) \
-        .join(Link.product) \
-        .filter(Product.domain == product_domain).all()
+    with Session() as session:
+        youtube_videos = session.query(YoutubeVideo.id, YoutubeVideo.description)\
+            .filter(YoutubeVideo.id == youtube_video_id).all()
 
-    for ind, des in youtube_videos:
-        update_youtube_video(video_id=ind,
-                             video_data={'tags': top_words(5, clean_text(des))},
-                             db_session_insert=session)
+        for ind, des in youtube_videos:
+            update_youtube_video(video_id=ind,
+                                 video_data={'tags': top_words(5, clean_text(des))},
+                                 db_session_insert=session)
 
-        delete_video.send(ind)
+            logging.info(f"YoutubeVideo with id={ind} ---> update!!!")
 
-        print(f"YoutubeVideo with id={ind} update!!!")
-
-    session.commit()
+        session.commit()

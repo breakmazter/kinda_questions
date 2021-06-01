@@ -29,7 +29,7 @@ Session_insert = sessionmaker(bind=engine_insert)
 
 def is_youtube_channel(youtube_channel_id, db_session):
     try:
-        youtube_channel = db_session.query(YoutubeChannel.id).filter(YoutubeChannel.id == youtube_channel_id).first()
+        youtube_channel = db_session.query(YoutubeChannel.id).filter(YoutubeChannel.id == youtube_channel_id).scalar()
 
         if youtube_channel:
             flag = True
@@ -45,18 +45,16 @@ def is_youtube_channel(youtube_channel_id, db_session):
 @dramatiq.actor(queue_name='josef_create_youtube_channel_josef',
                 store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
 def create_youtube_channel(channel_id):
-    session_insert = Session_insert()
 
-    with Session_select() as session_select:
-        channel = session_insert.merge(session_select.query(YoutubeChannel).get(channel_id))
+    with Session_select() as session_select, Session_insert() as session_insert:
+        channel = session_select.query(YoutubeChannel).get(channel_id)
 
-        if not is_youtube_channel(youtube_channel_id=channel_id, db_session=session_insert):
+        if is_youtube_channel(youtube_channel_id=channel_id, db_session=session_insert):
             logging.info(f"YoutubeChannel with id={channel_id} ---> exist!!!")
         else:
-            add_youtube_channel(channel=channel, db_session_insert=session_insert)
+            add_youtube_channel(channel=session_insert.merge(channel), db_session_insert=session_insert)
             logging.info(f"YoutubeChannel with id={channel_id} ---> create!!!")
 
-        create_email.send(channel_id)
+            create_email.send(channel_id)
 
         session_insert.commit()
-        session_select.close()

@@ -23,8 +23,10 @@ def add_youtube_channel(channel, db_session_insert):
     try:
         db_session_insert.add(channel)
         db_session_insert.flush()
-    except (exc.IntegrityError, exc.PendingRollbackError):
+    except exc.IntegrityError:
         logging.info("Integrity Error")
+    except exc.PendingRollbackError:
+        logging.info("Pending Rollback Error")
     except Exception as e:
         db_session_insert.rollback()
         raise e

@@ -33,8 +33,6 @@ def update_product_description(product_domain, product_data):
 
     with Session_insert() as session_insert:
         update_product(product_domain=product_domain, product_data=clean_product_data, db_session_insert=session_insert)
+        session_insert.commit()
 
         logging.info(f"Product with id={product_domain} update!!!")
-
-        session_insert.commit()
-        update_video_tags.send(product_domain)

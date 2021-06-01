@@ -6,14 +6,13 @@ from dramatiq.results.backends import RedisBackend
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
 from settings import POSTGRES_URL_FIRST, POSTGRES_URL_SECOND, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import create_youtube_channel, create_product, should_retry
+from actors_interface import create_youtube_channel, create_link, update_video_tags, should_retry, delete_video
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from db.crud import add_youtube_video, add_video
-from db.models import YoutubeVideo, Video
-
+from db.models import YoutubeVideo, Video, Product, Link
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
@@ -31,7 +30,7 @@ Session_insert = sessionmaker(bind=engine_insert)
 
 def is_video(video_id, db_session):
     try:
-        video = db_session.query(Video.id).filter(Video.id == video_id).first()
+        video = db_session.query(Video).filter(Video.id == video_id).scalar()
 
         if video:
             flag = True
@@ -46,7 +45,7 @@ def is_video(video_id, db_session):
 
 def is_youtube_video(youtube_video_id, db_session):
     try:
-        youtube_video = db_session.query(YoutubeVideo.id).filter(YoutubeVideo.id == youtube_video_id).first()
+        youtube_video = db_session.query(YoutubeVideo).filter(YoutubeVideo.id == youtube_video_id).scalar()
 
         if youtube_video:
             flag = True
@@ -65,23 +64,32 @@ def create_youtube_video(youtube_video_id):
     session_insert = Session_insert()
 
     with Session_select() as session_select:
+        youtube_video = session_select.query(YoutubeVideo).get(youtube_video_id)
+        video = session_select.query(Video).get(youtube_video.external_id)
 
-        youtube_video = session_insert.merge(session_select.query(YoutubeVideo).get(youtube_video_id))
-        video = session_insert.merge(session_select.query(Video).get(youtube_video.external_id))
+        video_product = session_select.query(Product.domain)\
+            .join(Product.links, Link.videos)\
+            .filter(Video.id == video.id).first()
 
-        if not is_video(video_id=youtube_video.external_id, db_session=session_insert):
-            logging.info(f"Video with id={youtube_video.external_id} ---> exist!!!")
-        else:
-            add_video(video=video, db_session_insert=session_insert)
+        if not is_video(video_id=youtube_video.external_id, db_session=session_insert) \
+                and not is_youtube_video(youtube_video_id=youtube_video_id, db_session=session_insert):
+
+            add_video(video=session_insert.merge(video), db_session_insert=session_insert)
             logging.info(f"Video with id={youtube_video.external_id} ---> create!!!")
 
-        if not is_youtube_video(youtube_video_id=youtube_video_id, db_session=session_insert):
-            logging.info(f"YoutubeVideo with id={youtube_video_id} ---> exist!!!")
-        else:
-            add_youtube_video(video=youtube_video, db_session_insert=session_insert)
+            add_youtube_video(video=session_insert.merge(youtube_video), db_session_insert=session_insert)
             logging.info(f"YoutubeVideo with id={youtube_video_id} ---> create!!!")
 
-        create_product.send(video.id)
-        create_youtube_channel.send(youtube_video.channel_id)
+            create_link.send(video.id)
+            create_youtube_channel.send(youtube_video.channel_id)
+
+            if video_product:
+                update_video_tags.send(youtube_video_id)
+            else:
+                delete_video.send(youtube_video_id)
+
+        else:
+            logging.info(f"Video with id={youtube_video.external_id} ---> exist!!!")
+            logging.info(f"YoutubeVideo with id={youtube_video_id} ---> exist!!!")
 
         session_insert.commit()

@@ -30,7 +30,7 @@ Session_insert = sessionmaker(bind=engine_insert)
 
 def is_product(product_id, db_session):
     try:
-        product = db_session.query(Product.domain).filter(Product.domain == product_id).first()
+        product = db_session.query(Product.domain).filter(Product.domain == product_id).scalar()
 
         if product:
             flag = True
@@ -46,9 +46,8 @@ def is_product(product_id, db_session):
 @dramatiq.actor(queue_name='josef_create_product_josef',
                 store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
 def create_product(video_id):
-    session_insert = Session_insert()
 
-    with Session_select() as session_select:
+    with Session_select() as session_select, Session_insert() as session_insert:
         products = session_select.query(Product).join(Product.links, Link.videos).filter(Video.id == video_id).all()
 
         for product in products:
@@ -57,11 +56,7 @@ def create_product(video_id):
             else:
                 add_product(session_insert.merge(product), db_session_insert=session_insert)
                 logging.info(f"Product with id={product.domain} ---> create!!!")
-
                 update_product_description.send(product.domain, product.description)
                 create_link.send(video_id)
 
         session_insert.commit()
-
-
-create_product("7RjJEGLeBBk")

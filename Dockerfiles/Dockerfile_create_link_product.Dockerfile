@@ -2,9 +2,9 @@ FROM python:3.9.2-slim-buster
 
 WORKDIR /create_link
 
-COPY ../create_link_worker.py /create_link/create_link_worker.py
+COPY ../create_link_product_worker.py /create_link/create_link_worker.py
 COPY ../settings.py /create_link/settings.py
-COPY ../requirements/create_link_requirements.txt /create_link/create_link_requirements.txt
+COPY ../requirements/create_link_product_requirements.txt /create_link/create_link_requirements.txt
 COPY ../actors_interface.py /create_link/actors_interface.py
 
 COPY ../db/crud.py /create_link/db/crud.py

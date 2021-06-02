@@ -43,7 +43,7 @@ def is_youtube_channel(youtube_channel_id, db_session):
 
 
 @dramatiq.actor(queue_name='josef_create_youtube_channel_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def create_youtube_channel(channel_id):
 
     with Session_select() as session_select, Session_insert() as session_insert:

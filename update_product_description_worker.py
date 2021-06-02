@@ -6,7 +6,7 @@ from dramatiq.results.backends import RedisBackend
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
 from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import should_retry, update_video_tags
+from actors_interface import should_retry
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -27,7 +27,7 @@ Session_insert = sessionmaker(bind=engine_insert)
 
 
 @dramatiq.actor(queue_name='josef_update_product_description_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def update_product_description(product_domain, product_data):
     clean_product_data = {'description': clean_text(product_data)}
 
@@ -35,4 +35,4 @@ def update_product_description(product_domain, product_data):
         update_product(product_domain=product_domain, product_data=clean_product_data, db_session_insert=session_insert)
         session_insert.commit()
 
-        logging.info(f"Product with id={product_domain} update!!!")
+        logging.info(f"Product with id={product_domain} ---> update!!!")

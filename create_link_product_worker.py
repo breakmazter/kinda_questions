@@ -58,9 +58,9 @@ def is_product(product_id, db_session):
         raise e
 
 
-@dramatiq.actor(queue_name='josef_create_link_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
-def create_link(video_id):
+@dramatiq.actor(queue_name='josef_create_link_product_josef',
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
+def create_link_product(video_id):
     with Session_select() as session_select, Session_insert() as session_insert:
         links = session_select.query(Link) \
             .join(VideoLink, VideoLink.c.link_id == Link.link) \
@@ -80,3 +80,7 @@ def create_link(video_id):
 
                 session_insert.commit()
                 logging.info(f"Link with id={link.link} ---> create!!!")
+
+
+if __name__ == "__main__":
+    create_link_product("vTc6vYLnf2A")

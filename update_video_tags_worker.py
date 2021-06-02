@@ -28,7 +28,7 @@ Session = sessionmaker(bind=engine)
 
 
 @dramatiq.actor(queue_name='josef_update_video_tags_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def update_video_tags(youtube_video_id):
 
     with Session() as session:

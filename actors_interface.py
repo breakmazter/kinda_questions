@@ -18,48 +18,42 @@ def should_retry(retries_so_far, exception):
 
 
 @dramatiq.actor(queue_name='josef_create_youtube_video_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def create_youtube_video(youtube_video_id):
     pass
 
 
 @dramatiq.actor(queue_name='josef_create_youtube_channel_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def create_youtube_channel(channel_id):
     pass
 
 
-@dramatiq.actor(queue_name='josef_create_link_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
-def create_link(video_id):
-    pass
-
-
-@dramatiq.actor(queue_name='josef_create_product_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
-def create_product(video_id):
+@dramatiq.actor(queue_name='josef_create_link_product_josef',
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
+def create_link_product(video_id):
     pass
 
 
 @dramatiq.actor(queue_name='josef_update_product_description_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def update_product_description(product_domain, product_data):
     pass
 
 
 @dramatiq.actor(queue_name='josef_update_video_tags_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def update_video_tags(youtube_video_id):
     pass
 
 
 @dramatiq.actor(queue_name='josef_delete_video_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def delete_video(video_id):
     pass
 
 
 @dramatiq.actor(queue_name='josef_create_email_josef',
-                store_results=False, max_retries=3, time_limit=180000, retry_when=should_retry)
+                store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def create_email(channel_id):
     pass

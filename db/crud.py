@@ -83,11 +83,8 @@ def add_videolink(video_id, link_id, db_session_insert):
         raise e
 
 
-def add_email(email_data, db_session_insert):
+def add_email(email, db_session_insert):
     try:
-        email = Email(channel_id=email_data['channel_id'],
-                      channel_description=email_data['channel_description'],
-                      video_description=email_data['video_description'])
         db_session_insert.add(email)
         db_session_insert.flush()
     except (exc.IntegrityError, exc.PendingRollbackError):

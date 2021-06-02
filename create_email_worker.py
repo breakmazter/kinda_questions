@@ -5,14 +5,15 @@ from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
-from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import should_retry
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
+from actors_interface import should_retry
+
 from db.models import YoutubeVideo, YoutubeChannel, Email
 from db.crud import add_email
+
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
@@ -28,8 +29,8 @@ Session = sessionmaker(bind=engine)
                 store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def create_email(channel_id):
     with Session() as session:
-        videos_description = session.query(YoutubeVideo.description, YoutubeChannel.description) \
-            .join(YoutubeChannel, YoutubeChannel.id == YoutubeVideo.channel_id) \
+        videos_description = session.query(YoutubeVideo.description, YoutubeChannel.description)\
+            .join(YoutubeChannel, YoutubeChannel.id == YoutubeVideo.channel_id)\
             .filter(YoutubeChannel.id == channel_id).all()
 
         for video in videos_description:

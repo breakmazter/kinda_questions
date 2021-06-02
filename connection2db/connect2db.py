@@ -2,8 +2,10 @@ import os
 from queue import Queue
 from threading import Thread
 
-tasks = ('cmd /k "cloud_sql_proxy -instances=oximain:us-central1:oc-video-products-clone-3=tcp:5433"',
-         'cmd /k "cloud_sql_proxy -instances=krokai-gav:us-central1:iosif=tcp:5432"')
+tasks = (
+    'cmd /k "cloud_sql_proxy -instances=oximain:us-central1:oc-video-products-clone-3=tcp:5433"',
+    'cmd /k "cloud_sql_proxy -instances=krokai-gav:us-central1:iosif=tcp:5432"'
+)
 
 
 def worker():

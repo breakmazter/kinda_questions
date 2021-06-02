@@ -199,7 +199,6 @@ def replace_repeated_whitespaces(text) -> object:
 # TODO remove Personal names
 def clean_text(text):
     if text:
-
         text = replace_bad_symbols(text)
 
         text = replace_emoji(text)
@@ -228,7 +227,7 @@ def clean_text(text):
 
         text = replace_repeated_whitespaces(text)
 
-        text = text.strip().lower()
+        text = text.strip()
     else:
         text = None
     return text

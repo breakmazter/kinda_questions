@@ -37,7 +37,7 @@ def create_link_product(video_id):
 
 @dramatiq.actor(queue_name='josef_update_product_description_josef',
                 store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
-def update_product_description(product_domain, product_data):
+def update_product_description(product_domain, product_description):
     pass
 
 

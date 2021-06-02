@@ -11,7 +11,7 @@ from actors_interface import create_youtube_channel, create_link_product, update
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from db.crud import add_youtube_video, add_video
+from db.crud import add_youtube_video, add_video, is_video, is_youtube_video
 from db.models import YoutubeVideo, Video, Product, Link
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
@@ -26,36 +26,6 @@ Session_select = sessionmaker(bind=engine_select)
 engine_insert = create_engine(POSTGRES_URL_FIRST, pool_pre_ping=True,
                               pool_size=100, max_overflow=100, pool_recycle=3600)
 Session_insert = sessionmaker(bind=engine_insert)
-
-
-def is_video(video_id, db_session):
-    try:
-        video = db_session.query(Video).filter(Video.id == video_id).scalar()
-
-        if video:
-            flag = True
-        else:
-            flag = False
-
-        return flag
-    except Exception as e:
-        db_session.rollback()
-        raise e
-
-
-def is_youtube_video(youtube_video_id, db_session):
-    try:
-        youtube_video = db_session.query(YoutubeVideo).filter(YoutubeVideo.id == youtube_video_id).scalar()
-
-        if youtube_video:
-            flag = True
-        else:
-            flag = False
-
-        return flag
-    except Exception as e:
-        db_session.rollback()
-        raise e
 
 
 @dramatiq.actor(queue_name='josef_create_youtube_video_josef',

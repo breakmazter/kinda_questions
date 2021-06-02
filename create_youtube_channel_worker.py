@@ -5,41 +5,28 @@ from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
 from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 from settings import POSTGRES_URL_FIRST, POSTGRES_URL_SECOND, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 from actors_interface import should_retry, create_email
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import QueuePool
-
-from db.crud import add_youtube_channel
+from db.crud import add_youtube_channel, is_youtube_channel
 from db.models import YoutubeChannel
+
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
 broker.add_middleware(Results(backend=result_backend))
 dramatiq.set_broker(broker)
 
-engine_select = create_engine(POSTGRES_URL_SECOND, pool_size=20, max_overflow=20, poolclass=QueuePool)
+engine_select = create_engine(POSTGRES_URL_SECOND, pool_pre_ping=True,
+                              pool_size=100, max_overflow=100, pool_recycle=3600)
 Session_select = sessionmaker(bind=engine_select)
 
-engine_insert = create_engine(POSTGRES_URL_FIRST, pool_size=20, max_overflow=20, poolclass=QueuePool)
+engine_insert = create_engine(POSTGRES_URL_FIRST, pool_pre_ping=True,
+                              pool_size=100, max_overflow=100, pool_recycle=3600)
 Session_insert = sessionmaker(bind=engine_insert)
-
-
-def is_youtube_channel(youtube_channel_id, db_session):
-    try:
-        youtube_channel = db_session.query(YoutubeChannel.id).filter(YoutubeChannel.id == youtube_channel_id).scalar()
-
-        if youtube_channel:
-            flag = True
-        else:
-            flag = False
-
-        return flag
-    except Exception as e:
-        db_session.rollback()
-        raise e
 
 
 @dramatiq.actor(queue_name='josef_create_youtube_channel_josef',

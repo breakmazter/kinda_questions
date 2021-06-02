@@ -1,7 +1,7 @@
 import logging
 
 
-def top_words(n, text):
+def top_words(n: int, text: str) -> str:
     keys = list(set(list(map(lambda word: word if len(word) >= 4 else None, list(set(text.split()))))))
     try:
         keys.remove(None)

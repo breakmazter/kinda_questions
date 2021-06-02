@@ -28,8 +28,8 @@ Session_insert = sessionmaker(bind=engine_insert)
 
 @dramatiq.actor(queue_name='josef_update_product_description_josef',
                 store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
-def update_product_description(product_domain, product_data):
-    clean_product_data = {'description': clean_text(product_data)}
+def update_product_description(product_domain, product_description):
+    clean_product_data = {'description': clean_text(product_description)}
 
     with Session_insert() as session_insert:
         update_product(product_domain=product_domain, product_data=clean_product_data, db_session_insert=session_insert)

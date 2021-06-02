@@ -1,18 +1,16 @@
 import logging
 
 import dramatiq
+from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
-from dramatiq.brokers.rabbitmq import RabbitmqBroker
-
-from settings import POSTGRES_URL_FIRST, POSTGRES_URL_SECOND, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import create_youtube_channel, create_link_product, update_video_tags, should_retry, delete_video
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from db.crud import add_youtube_video, add_video, is_video, is_youtube_video
+from actors_interface import create_youtube_channel, create_link_product, update_video_tags, should_retry, delete_video
+from db.crud import add_object, is_video, is_youtube_video
 from db.models import YoutubeVideo, Video, Product, Link
+from settings import POSTGRES_URL_FIRST, POSTGRES_URL_SECOND, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
@@ -44,10 +42,10 @@ def create_youtube_video(youtube_video_id):
         if not is_video(video_id=youtube_video.external_id, db_session=session_insert) \
                 and not is_youtube_video(youtube_video_id=youtube_video_id, db_session=session_insert):
 
-            add_video(video=session_insert.merge(video), db_session_insert=session_insert)
+            add_object(obj=session_insert.merge(video), db_session_insert=session_insert)
             logging.info(f"Video with id={youtube_video.external_id} ---> create!!!")
 
-            add_youtube_video(video=session_insert.merge(youtube_video), db_session_insert=session_insert)
+            add_object(obj=session_insert.merge(youtube_video), db_session_insert=session_insert)
             logging.info(f"YoutubeVideo with id={youtube_video_id} ---> create!!!")
 
             if video_product:

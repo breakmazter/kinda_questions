@@ -1,25 +1,21 @@
 import logging
 
 import dramatiq
+from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
-from dramatiq.brokers.rabbitmq import RabbitmqBroker
-
-from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
-from actors_interface import should_retry
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from actors_interface import should_retry
 from db.crud import update_product
-
+from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 from utils.clean_text import clean_text
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
 broker.add_middleware(Results(backend=result_backend))
 dramatiq.set_broker(broker)
-
 
 engine_insert = create_engine(POSTGRES_URL_FIRST, pool_pre_ping=True,
                               pool_size=100, max_overflow=100, pool_recycle=3600)

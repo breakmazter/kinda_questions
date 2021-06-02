@@ -13,77 +13,19 @@ from db.models import *
 """
 
 
-def add_youtube_video(video, db_session_insert):
+def add_object(obj, db_session_insert):
     try:
-        db_session_insert.add(video)
+        db_session_insert.add(obj)
         db_session_insert.flush()
-    except exc.IntegrityError:
-        logging.info("Integrity Error")
-    except exc.PendingRollbackError:
-        logging.info("Pending Rollback Error")
     except Exception as e:
-        db_session_insert.rollback()
-        raise e
-    except TimeoutError:
-        db_session_insert.close()
+        if isinstance(e, exc.IntegrityError):
+            logging.info("Integrity Error")
+        elif isinstance(e, exc.PendingRollbackError):
+            logging.info("Pending Rollback Error")
+        else:
+            logging.info("Unknown Error")
 
-
-def add_youtube_channel(channel, db_session_insert):
-    try:
-        db_session_insert.add(channel)
-        db_session_insert.flush()
-    except exc.IntegrityError:
-        logging.info("Integrity Error")
-    except exc.PendingRollbackError:
         logging.info("Pending Rollback Error")
-    except Exception as e:
-        db_session_insert.rollback()
-        raise e
-
-
-def add_video(video, db_session_insert):
-    try:
-        db_session_insert.add(video)
-        db_session_insert.flush()
-    except exc.IntegrityError:
-        logging.info("Integrity Error")
-    except exc.PendingRollbackError:
-        logging.info("Pending Rollback Error")
-    except Exception as e:
-        db_session_insert.rollback()
-        raise e
-    except TimeoutError:
-        db_session_insert.close()
-
-
-def add_link(link, db_session_insert):
-    try:
-        db_session_insert.add(link)
-        db_session_insert.flush()
-    except exc.IntegrityError:
-        logging.info("Integrity Error")
-    except exc.PendingRollbackError:
-        logging.info("Pending Rollback Error")
-    except Exception as e:
-        db_session_insert.rollback()
-        raise e
-    except TimeoutError:
-        db_session_insert.close()
-
-
-def add_product(product, db_session_insert):
-    try:
-        db_session_insert.add(product)
-        db_session_insert.flush()
-    except exc.IntegrityError:
-        logging.info("Integrity Error")
-    except exc.PendingRollbackError:
-        logging.info("Pending Rollback Error")
-    except Exception as e:
-        db_session_insert.rollback()
-        raise e
-    except TimeoutError:
-        db_session_insert.close()
 
 
 def add_videolink(video_id, link_id, db_session_insert):
@@ -91,30 +33,15 @@ def add_videolink(video_id, link_id, db_session_insert):
         data = insert(VideoLink).values(video_id=video_id, link_id=link_id)
         db_session_insert.execute(data)
         db_session_insert.flush()
-    except exc.IntegrityError:
-        logging.info("Integrity Error")
-    except exc.PendingRollbackError:
-        logging.info("Pending Rollback Error")
-    except (exc.IntegrityError, exc.PendingRollbackError):
-        logging.info("Integrity Error")
     except Exception as e:
-        db_session_insert.rollback()
-        raise e
+        if isinstance(e, exc.IntegrityError):
+            logging.info("Integrity Error")
+        elif isinstance(e, exc.PendingRollbackError):
+            logging.info("Pending Rollback Error")
+        else:
+            logging.info("Unknown Error")
 
-
-def add_email(email, db_session_insert):
-    try:
-        db_session_insert.add(email)
-        db_session_insert.flush()
-    except exc.IntegrityError:
-        logging.info("Integrity Error")
-    except exc.PendingRollbackError:
         logging.info("Pending Rollback Error")
-    except Exception as e:
-        db_session_insert.rollback()
-        raise e
-    except TimeoutError:
-        db_session_insert.close()
 
 
 """
@@ -128,26 +55,30 @@ def update_product(product_domain, product_data, db_session_insert):
     try:
         db_session_insert.query(Product).filter(Product.domain == product_domain).update(product_data)
         db_session_insert.flush()
-    except exc.IntegrityError:
-        logging.info("Integrity Error")
-    except exc.PendingRollbackError:
-        logging.info("Pending Rollback Error")
     except Exception as e:
-        db_session_insert.rollback()
-        raise e
+        if isinstance(e, exc.IntegrityError):
+            logging.info("Integrity Error")
+        elif isinstance(e, exc.PendingRollbackError):
+            logging.info("Pending Rollback Error")
+        else:
+            logging.info("Unknown Error")
+
+        logging.info("Pending Rollback Error")
 
 
 def update_youtube_video(video_id, video_data, db_session_insert):
     try:
         db_session_insert.query(YoutubeVideo).filter(YoutubeVideo.id == video_id).update(video_data)
         db_session_insert.flush()
-    except exc.IntegrityError:
-        logging.info("Integrity Error")
-    except exc.PendingRollbackError:
-        logging.info("Pending Rollback Error")
     except Exception as e:
-        db_session_insert.rollback()
-        raise e
+        if isinstance(e, exc.IntegrityError):
+            logging.info("Integrity Error")
+        elif isinstance(e, exc.PendingRollbackError):
+            logging.info("Pending Rollback Error")
+        else:
+            logging.info("Unknown Error")
+
+        logging.info("Pending Rollback Error")
 
 
 """
@@ -159,14 +90,9 @@ def update_youtube_video(video_id, video_data, db_session_insert):
 
 def is_video(video_id, db_session):
     try:
-        video = db_session.query(Video).filter(Video.id == video_id).scalar()
-
-        if video:
-            flag = True
-        else:
-            flag = False
-
-        return flag
+        return db_session.query(
+            db_session.query(Video.id).filter_by(id=video_id).exist()
+        ).scalar()
     except Exception as e:
         db_session.rollback()
         raise e
@@ -174,14 +100,9 @@ def is_video(video_id, db_session):
 
 def is_youtube_video(youtube_video_id, db_session):
     try:
-        youtube_video = db_session.query(YoutubeVideo).filter(YoutubeVideo.id == youtube_video_id).scalar()
-
-        if youtube_video:
-            flag = True
-        else:
-            flag = False
-
-        return flag
+        return db_session.query(
+            db_session.query(YoutubeVideo.id).filter_by(id=youtube_video_id).exist()
+        ).scalar()
     except Exception as e:
         db_session.rollback()
         raise e
@@ -189,14 +110,9 @@ def is_youtube_video(youtube_video_id, db_session):
 
 def is_youtube_channel(youtube_channel_id, db_session):
     try:
-        youtube_channel = db_session.query(YoutubeChannel.id).filter(YoutubeChannel.id == youtube_channel_id).scalar()
-
-        if youtube_channel:
-            flag = True
-        else:
-            flag = False
-
-        return flag
+        return db_session.query(
+            db_session.query(YoutubeChannel.id).filter_by(id=youtube_channel_id).exist()
+        ).scalar()
     except Exception as e:
         db_session.rollback()
         raise e
@@ -204,14 +120,9 @@ def is_youtube_channel(youtube_channel_id, db_session):
 
 def is_link(link_id, db_session):
     try:
-        link = db_session.query(Link.link).filter(Link.link == link_id).scalar()
-
-        if link:
-            flag = True
-        else:
-            flag = False
-
-        return flag
+        return db_session.query(
+            db_session.query(Link.link).filter_by(link=link_id).exist()
+        ).scalar()
     except Exception as e:
         db_session.rollback()
         raise e
@@ -219,14 +130,9 @@ def is_link(link_id, db_session):
 
 def is_product(product_id, db_session):
     try:
-        product = db_session.query(Product.domain).filter(Product.domain == product_id).scalar()
-
-        if product:
-            flag = True
-        else:
-            flag = False
-
-        return flag
+        return db_session.query(
+            db_session.query(Product.domain).filter_by(domain=product_id).exist()
+        ).scalar()
     except Exception as e:
         db_session.rollback()
         raise e

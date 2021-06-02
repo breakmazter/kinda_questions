@@ -1,11 +1,10 @@
 import dramatiq
+from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from dramatiq.middleware import TimeLimitExceeded
 from dramatiq.results import Results, ResultTimeout
 from dramatiq.results.backends import RedisBackend
-from dramatiq.brokers.rabbitmq import RabbitmqBroker
 
 from settings import REDIS_PORT, REDIS_HOST, REDIS_PASSWORD, RABBITMQ_URL
-
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)

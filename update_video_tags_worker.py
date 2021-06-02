@@ -1,22 +1,18 @@
 import logging
 
 import dramatiq
+from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
-from dramatiq.brokers.rabbitmq import RabbitmqBroker
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 from actors_interface import should_retry
-
 from db.crud import update_youtube_video
 from db.models import YoutubeVideo
-
+from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 from utils.clean_text import clean_text
 from utils.proccesing_text import top_words
-
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)

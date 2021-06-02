@@ -1,19 +1,16 @@
 import logging
 
 import dramatiq
+from dramatiq.brokers.rabbitmq import RabbitmqBroker
 from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
-from dramatiq.brokers.rabbitmq import RabbitmqBroker
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 from actors_interface import should_retry
-
+from db.crud import add_object
 from db.models import YoutubeVideo, YoutubeChannel, Email
-from db.crud import add_email
-
+from settings import POSTGRES_URL_FIRST, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
@@ -28,6 +25,7 @@ Session = sessionmaker(bind=engine)
 @dramatiq.actor(queue_name='josef_create_email_josef',
                 store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def create_email(channel_id):
+
     with Session() as session:
         videos_description = session.query(YoutubeVideo.description, YoutubeChannel.description)\
             .join(YoutubeChannel, YoutubeChannel.id == YoutubeVideo.channel_id)\
@@ -40,7 +38,7 @@ def create_email(channel_id):
 
             email = Email(**email_data)
 
-        add_email(email=session.merge(email), db_session_insert=session)
+        add_object(obj=session.merge(email), db_session_insert=session)
         logging.info(f"Email with channel_id={channel_id} ---> create!!!")
 
         session.commit()

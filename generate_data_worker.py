@@ -1,13 +1,10 @@
 import dramatiq
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from settings import POSTGRES_URL_SECOND
 from actors_interface import create_youtube_video
-
 from db.models import YoutubeVideo
-
+from settings import POSTGRES_URL_SECOND
 
 engine = create_engine(POSTGRES_URL_SECOND, pool_pre_ping=True,
                        pool_size=100, max_overflow=100, pool_recycle=3600)

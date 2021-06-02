@@ -1,8 +1,9 @@
-from urlextract import URLExtract
 import re
-import emoji
-
 import warnings
+
+import emoji
+from urlextract import URLExtract
+
 warnings.filterwarnings("ignore")
 
 extractor = URLExtract()
@@ -10,7 +11,7 @@ extractor = URLExtract()
 uchr = chr  # Python 3
 
 _removable_emoji_components = (
-    (0x20E3, 0xFE0F),             # combining enclosing keycap, VARIATION SELECTOR-16
+    (0x20E3, 0xFE0F),  # combining enclosing keycap, VARIATION SELECTOR-16
     range(0x1F1E6, 0x1F1FF + 1),  # regional indicator symbol letter a..regional indicator symbol letter z
     range(0x1F3FB, 0x1F3FF + 1),  # light skin tone..dark skin tone
     range(0x1F9B0, 0x1F9B3 + 1),  # red-haired..white-haired
@@ -24,9 +25,9 @@ emoji_components = re.compile(u'({})'.format(u'|'.join([
 def normalize_spacing_for_tok(text: str) -> str:
     res = (
         text.replace("\r", "")
-        .replace("(", " (")
-        .replace(")", ") ")
-        .replace(" +", " ")
+            .replace("(", " (")
+            .replace(")", ") ")
+            .replace(" +", " ")
     )
     res = re.sub(r"\) ([\.\!\:\?\;\,])", r"\)\1", res)
     res = res.replace("( ", "(").replace(" )", ")")

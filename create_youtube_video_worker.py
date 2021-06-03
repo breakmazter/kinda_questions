@@ -29,9 +29,8 @@ Session_insert = sessionmaker(bind=engine_insert)
 @dramatiq.actor(queue_name='josef_create_youtube_video_josef',
                 store_results=True, max_retries=3, time_limit=180000, retry_when=should_retry)
 def create_youtube_video(youtube_video_id):
-    session_insert = Session_insert()
 
-    with Session_select() as session_select:
+    with Session_select() as session_select, Session_insert() as session_insert:
         youtube_video = session_select.query(YoutubeVideo).get(youtube_video_id)
         video = session_select.query(Video).get(youtube_video.external_id)
 

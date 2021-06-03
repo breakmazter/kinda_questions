@@ -91,7 +91,7 @@ def update_youtube_video(video_id, video_data, db_session_insert):
 def is_video(video_id, db_session):
     try:
         return db_session.query(
-            db_session.query(Video.id).filter_by(id=video_id).exist()
+            db_session.query(Video.id).filter_by(id=video_id).exists()
         ).scalar()
     except Exception as e:
         db_session.rollback()
@@ -101,7 +101,7 @@ def is_video(video_id, db_session):
 def is_youtube_video(youtube_video_id, db_session):
     try:
         return db_session.query(
-            db_session.query(YoutubeVideo.id).filter_by(id=youtube_video_id).exist()
+            db_session.query(YoutubeVideo.id).filter_by(id=youtube_video_id).exists()
         ).scalar()
     except Exception as e:
         db_session.rollback()
@@ -111,7 +111,7 @@ def is_youtube_video(youtube_video_id, db_session):
 def is_youtube_channel(youtube_channel_id, db_session):
     try:
         return db_session.query(
-            db_session.query(YoutubeChannel.id).filter_by(id=youtube_channel_id).exist()
+            db_session.query(YoutubeChannel.id).filter_by(id=youtube_channel_id).exists()
         ).scalar()
     except Exception as e:
         db_session.rollback()
@@ -121,7 +121,7 @@ def is_youtube_channel(youtube_channel_id, db_session):
 def is_link(link_id, db_session):
     try:
         return db_session.query(
-            db_session.query(Link.link).filter_by(link=link_id).exist()
+            db_session.query(Link.link).filter_by(link=link_id).exists()
         ).scalar()
     except Exception as e:
         db_session.rollback()
@@ -131,7 +131,7 @@ def is_link(link_id, db_session):
 def is_product(product_id, db_session):
     try:
         return db_session.query(
-            db_session.query(Product.domain).filter_by(domain=product_id).exist()
+            db_session.query(Product.domain).filter_by(domain=product_id).exists()
         ).scalar()
     except Exception as e:
         db_session.rollback()

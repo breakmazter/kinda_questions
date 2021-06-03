@@ -2,7 +2,7 @@ FROM python:3.9.2
 
 WORKDIR /update_product_description
 
-COPY update_product_description_worker.py /create_email/update_product_description_worker.py
+COPY update_product_description_worker.py /update_product_description/update_product_description_worker.py
 COPY settings.py /update_product_description/settings.py
 COPY requirements.txt /update_product_description/requirements.txt
 COPY actors_interface.py /update_product_description/actors_interface.py

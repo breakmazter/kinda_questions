@@ -14,4 +14,4 @@ RUN pip install --upgrade pip
 RUN python -m pip install --no-cache-dir -U 'dramatiq[rabbitmq, redis]'==1.11.0
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
-CMD ["dramatiq", "-p 8", "-t 16", "delete_video_worker", "-Q", "josef_delete_video_josef"
+CMD ["dramatiq", "-p 8", "-t 16", "delete_video_worker", "-Q", "josef_delete_video_josef"]

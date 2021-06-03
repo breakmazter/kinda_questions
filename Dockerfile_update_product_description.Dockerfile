@@ -11,7 +11,6 @@ COPY db/crud.py /update_product_description/db/crud.py
 COPY db/models.py /update_product_description/db/models.py
 
 COPY utils/clean_text.py /update_product_description/utils/clean_text.py
-COPY utils/proccesing_text.py /update_product_description/utils/proccesing_text.py
 
 RUN pip install --upgrade pip
 RUN python -m pip install --no-cache-dir -U 'dramatiq[rabbitmq, redis]'==1.11.0

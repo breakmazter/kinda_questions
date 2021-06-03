@@ -38,7 +38,7 @@ def create_email(channel_id):
 
             email = Email(**email_data)
 
-        add_object(obj=session.merge(email), db_session_insert=session)
-        logging.info(f"Email with channel_id={channel_id} ---> create!!!")
+            add_object(obj=session.merge(email), db_session_insert=session)
+            logging.info(f"Email with channel_id={channel_id} ---> create!!!")
 
         session.commit()

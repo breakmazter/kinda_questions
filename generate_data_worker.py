@@ -32,13 +32,13 @@ def split(arr, size):
     return mass
 
 
-def get_ids(count: int, batch_size: int):
+def get_ids(batch_size: int):
     with Session() as session:
-        video_ids = session.query(YoutubeVideo.id).filter(YoutubeVideo.description_lang == 'ru').limit(count).all()
+        video_ids = session.query(YoutubeVideo.id).filter(YoutubeVideo.description_lang == 'ru').all()
 
         for video_id in split(video_ids, batch_size):
             dramatiq.group([create_youtube_video.message(ind.id) for ind in video_id]).run()
 
 
 if __name__ == '__main__':
-    get_ids(100, 10)
+    get_ids(1000)

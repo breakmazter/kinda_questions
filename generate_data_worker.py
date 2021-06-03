@@ -30,4 +30,4 @@ def get_ids(count: int, batch_size: int):
 
 
 if __name__ == '__main__':
-    get_ids(100000, 1000)
+    get_ids(100, 10)

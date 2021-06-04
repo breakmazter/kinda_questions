@@ -24,20 +24,43 @@ count vCPUs | RAM | count pool | count thread | usage CPU | usage RAM | speed | 
 | 2 | 1 GB | 4 | 4 | 40% | 5% | ~14 message/sec | ~1.8 hour
 | 2 | 1 GB | 4 | 16 | 40% | 5% | ~14 message/sec | ~1.8 hour
 |#|#|#|#|#|#|#|#|
-| 2 | 4 GB | 4 | 4 | 40% | 1.2% | ~65 message/sec | ~0.4 hour
+| 2 | 4 GB | 4 | 4 | 40% | 1.2% | ~76 message/sec | ~0.4 hour
+| 2 | 4 GB | 4 | 8 | 38.6% | 1.6% | ~60 message/sec | ~0.4 hour
 | 2 | 4 GB | 4 | 16 | 38.6% | 1.6% | ~62 message/sec | ~0.4 hour
 
 ## create_youtube_channel_worker
 count vCPUs | RAM | count pool | count thread | usage CPU | usage RAM | speed | time 
 --- | --- | --- | --- | --- | --- | --- | ---
-| 2 | 1 GB | 1 | 1
-| 2 | 1 GB | 1 | 4 
-| 2 | 1 GB | 1 | 8
-| 2 | 1 GB | 1 | 16 | 99% | 9.7% | 24 message/sec | 
-| 2 | 1 GB | 1 | 32
-| 2 | 1 GB | 1 | 64
-| 2 | 1 GB | 1 | 128
-| 2 | 1 GB | 1 | 256
-| 2 | 1 GB | 2 | 1  
-| 2 | 1 GB | 4 | 1
-| 2 | 1 GB | 8 | 1
+| 2 | 4 GB | 1 | 1
+| 2 | 4 GB | 1 | 16 | 99% | 9.7% | 24 message/sec | 
+
+## create_email_worker
+count vCPUs | RAM | count pool | count thread | usage CPU | usage RAM | speed | time 
+--- | --- | --- | --- | --- | --- | --- | ---
+| 2 | 4 GB | 1 | 1
+| 2 | 4 GB | 1 | 16 | 99% | 9.7% | 24 message/sec | 
+
+## create_link_product_worker
+count vCPUs | RAM | count pool | count thread | usage CPU | usage RAM | speed | time 
+--- | --- | --- | --- | --- | --- | --- | ---
+| 2 | 4 GB | 1 | 1
+| 2 | 4 GB | 1 | 16 | 99% | 9.7% | 24 message/sec | 
+
+## update_product_description_worker
+count vCPUs | RAM | count pool | count thread | usage CPU | usage RAM | speed | time 
+--- | --- | --- | --- | --- | --- | --- | ---
+| 2 | 4 GB | 1 | 1
+| 2 | 4 GB | 1 | 16 | 99% | 9.7% | 24 message/sec | 
+
+## update_video_tags_worker
+count vCPUs | RAM | count pool | count thread | usage CPU | usage RAM | speed | time 
+--- | --- | --- | --- | --- | --- | --- | ---
+| 2 | 4 GB | 1 | 1
+| 2 | 4 GB | 1 | 16 | 99% | 9.7% | 24 message/sec | 
+
+## delete_video_worker
+count vCPUs | RAM | count pool | count thread | usage CPU | usage RAM | speed | time 
+--- | --- | --- | --- | --- | --- | --- | ---
+| 2 | 4 GB | 1 | 1
+| 2 | 4 GB | 1 | 16 | 99% | 9.7% | 24 message/sec | 
+

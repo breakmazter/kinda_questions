@@ -23,7 +23,7 @@ count vCPUs | RAM | count pool | count thread | usage CPU | usage RAM | speed | 
 | 2 | 1 GB | 2 | 4 | 65.6% | 6.6% | 10-11 message/sec | 2 hour
 | 2 | 1 GB | 4 | 4 | 40% | 5% | ~14 message/sec | ~1.8 hour
 | 2 | 1 GB | 4 | 16 | 40% | 5% | ~14 message/sec | ~1.8 hour
-|#|#|#|#|#|#|#|#|
+|#|#|#|#|#|#|#|#
 | 2 | 4 GB | 4 | 4 | 40% | 1.2% | ~76 message/sec | ~0.4 hour
 | 2 | 4 GB | 4 | 8 | 38.6% | 1.6% | ~60 message/sec | ~0.4 hour
 | 2 | 4 GB | 4 | 16 | 38.6% | 1.6% | ~62 message/sec | ~0.4 hour

@@ -42,9 +42,34 @@ count vCPUs | RAM | count procces | count thread| speed
 | 2 | 4 GB | 4 | 8 | 140 message/sec |
 | 2 | 4 GB | 4 | 16 | 150 message/sec |
 
+## create_link_product_worker
+count vCPUs | RAM | count procces | count thread| speed
+--- | --- | --- | --- | --- 
+| 2 | 4 GB | 1 | 1
+| 2 | 4 GB | 4 | 2 | 50 message/sec | 
+| 2 | 4 GB | 4 | 4 | 70 message/sec | 
+| 2 | 4 GB | 4 | 8 | 40 message/sec | 
+| 2 | 4 GB | 4 | 16 | 30 message/sec | 
+
+## create_email_worker
+count vCPUs | RAM | count procces | count thread| speed
+--- | --- | --- | --- | --- 
+| 2 | 4 GB | 1 | 
+| 2 | 4 GB | 1 | 4 | 52 message/sec | 
+| 2 | 4 GB | 1 | 8 | 60 message/sec | 
+| 2 | 4 GB | 1 | 16 | 90 message/sec | 
+| 2 | 4 GB | 1 | 32 | 50 message/sec |
+
+## delete_video_worker
+count vCPUs | RAM | count procces | count thread| speed
+--- | --- | --- | --- | --- 
+| 2 | 4 GB | 1 | 1 | 
+ 
+
+
 --------------------------------------------------------------------------------------------------------------------------
 
-DATA_COUNT = ALl_DATA
+DATA_COUNT = ALL_DATA
 
 Time for generate data: t = 643.9179027080536 seconds
 

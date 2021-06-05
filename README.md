@@ -16,16 +16,17 @@ count vCPUs | RAM | count procces | count thread | speed | usage CPU
 --- | --- | --- | --- | --- | ---
 | 2 | 1 GB | 1 | 4 | 10-11 message/sec | 
 | 2 | 1 GB | 1 | 8 | 8-9 message/sec 
-| 2 | 1 GB | 1 | 16 |~8 message/sec 
-| 2 | 1 GB | 2 | 1 |  ~8 message/sec 
-| 2 | 1 GB | 2 | 2 | ~9 message/sec
+| 2 | 1 GB | 1 | 16 |8 message/sec 
+| 2 | 1 GB | 2 | 1 |  8 message/sec 
+| 2 | 1 GB | 2 | 2 | 9 message/sec
 | 2 | 1 GB | 2 | 4 | 10-11 message/sec
-| 2 | 1 GB | 4 | 4 | ~14 message/sec 
-| 2 | 1 GB | 4 | 16 |~14 message/sec 
+| 2 | 1 GB | 4 | 4 | 14 message/sec 
+| 2 | 1 GB | 4 | 16 | 14 message/sec 
 | 2 | 4 GB | 1 | 1 | 15-16 message/sec
-| 2 | 4 GB | 4 | 4 | ~76 message/sec | 98% 
-| 2 | 4 GB | 4 | 8 |  ~60 message/sec
-| 2 | 4 GB | 4 | 16 | ~62 message/sec 
+| 2 | 4 GB | 4 | 4 | 50 message/sec | 98% 
+| 2 | 4 GB | 4 | 8 | 60 message/sec
+| 2 | 4 GB | 4 | 16 | 65 message/sec 
+| 2 | 4 GB | 4 | 32 | 50 message/sec
 
 Type MAchine: 2 vCPUs, 1GB RAM
 Count MAchine: 3
@@ -57,7 +58,7 @@ count vCPUs | RAM | count procces | count thread| speed | usage CPU
 | 2 | 4 GB | 4 | 2 | 40 message/sec | 
 | 2 | 4 GB | 4 | 4 | 50 message/sec | 99% 
 | 2 | 4 GB | 4 | 8 | 38 message/sec | 
-| 2 | 4 GB | 4 | 16 | 30 message/sec | 
+| 2 | 4 GB | 4 | 16 | 35 message/sec | 
 
 Type MAchine: 2 vCPUs, 1GB RAM
 Count MAchine: 3

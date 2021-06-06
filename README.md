@@ -104,7 +104,7 @@ count vCPUs | RAM | count procces | count thread| speed | usage CPU
 | 2 | 4 GB | 2 | 32 | 30 message/sec |
 | 2 | 4 GB | 4 | 4 | 10 message/sec | 
 | 2 | 4 GB | 4 | 8 | 20 message/sec | 
-| 2 | 4 GB | 4 | 16 | 40 message/sec | 
+| 2 | 4 GB | 4 | 16 | 52 message/sec | 
 | 2 | 4 GB | 4 | 32 | 30 message/sec |
 | 2 | 4 GB | 4 | 64 | 2 message/sec |
 
@@ -115,8 +115,9 @@ Count MAchine: 3
 ## update_product_description_worker
 count vCPUs | RAM | count procces | count thread| speed | usage CPU 
 --- | --- | --- | --- | --- | ---
-| 2 | 4 GB | 1 | 1 |
-
+| 2 | 4 GB | 4 | 4 | 20 message/sec
+| 2 | 4 GB | 4 | 8 | 40 message/sec
+| 2 | 4 GB | 4 | 16 | 60 message/sec
 
 Type MAchine: 2 vCPUs, 1GB RAM
 Count MAchine: 1

@@ -3,8 +3,8 @@ from queue import Queue
 from threading import Thread
 
 tasks = (
-    'cmd /k "cloud_sql_proxy -instances=oximain:us-central1:oc-video-products-clone-3=tcp:5434"',
-    'cmd /k "cloud_sql_proxy -instances=oximain:us-central1:iosif-mazan-db-testing-aaa=tcp:5435"'
+    'cmd /k "cloud_sql_proxy -instances=oximain:us-central1:oc-video-products-clone-3=tcp:5432"',
+    'cmd /k "cloud_sql_proxy -instances=oximain:us-central1:kinda-questions-2-mazanios=tcp:5433"'
 )
 
 

@@ -15,6 +15,8 @@ COPY utils/proccesing_text.py /update_video_tags/utils/proccesing_text.py
 
 RUN pip install --upgrade pip
 RUN python -m pip install --no-cache-dir -U 'dramatiq[rabbitmq, redis]'==1.11.0
-RUN python -m pip install -r requirements.txt
+RUN python -m pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir emoji==1.2.0
+RUN python -m pip install --no-cache-dir urlextract==1.2.0
 
-CMD ["dramatiq", "-p 8", "-t 16", "update_video_tags_worker", "-Q", "josef_update_video_tags_josef"]
+CMD ["dramatiq", "-t 16", "update_video_tags_worker", "-Q", "josef_update_video_tags_josef"]

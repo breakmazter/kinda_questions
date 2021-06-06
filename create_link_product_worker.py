@@ -10,18 +10,18 @@ from sqlalchemy.orm import sessionmaker
 from actors_interface import should_retry, update_product_description
 from db.crud import add_object, add_videolink, is_link, is_product
 from db.models import VideoLink, Link
-from settings import POSTGRES_URL_FIRST, POSTGRES_URL_SECOND, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
+from settings import POSTGRES_URL_SON, POSTGRES_URL_FATHER, RABBITMQ_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
 
 broker = RabbitmqBroker(url=RABBITMQ_URL)
 result_backend = RedisBackend(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
 broker.add_middleware(Results(backend=result_backend))
 dramatiq.set_broker(broker)
 
-engine_select = create_engine(POSTGRES_URL_SECOND, pool_pre_ping=True,
+engine_select = create_engine(POSTGRES_URL_FATHER, pool_pre_ping=True,
                               pool_size=100, max_overflow=100, pool_recycle=3600)
 Session_select = sessionmaker(bind=engine_select)
 
-engine_insert = create_engine(POSTGRES_URL_FIRST, pool_pre_ping=True,
+engine_insert = create_engine(POSTGRES_URL_SON, pool_pre_ping=True,
                               pool_size=100, max_overflow=100, pool_recycle=3600)
 Session_insert = sessionmaker(bind=engine_insert)
 

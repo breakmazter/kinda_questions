@@ -15,5 +15,7 @@ COPY utils/clean_text.py /update_product_description/utils/clean_text.py
 RUN pip install --upgrade pip
 RUN python -m pip install --no-cache-dir -U 'dramatiq[rabbitmq, redis]'==1.11.0
 RUN python -m pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir emoji==1.2.0
+RUN python -m pip install --no-cache-dir urlextract==1.2.0
 
-CMD ["dramatiq", "-p 8", "-t 16", "update_product_description_worker", "-Q", "josef_update_product_description_josef"]
+CMD ["dramatiq", "-t 16", "update_product_description_worker", "-Q", "josef_update_product_description_josef"]

@@ -5,11 +5,11 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Table
 from sqlalchemy.sql import func
 
-from settings import POSTGRES_URL_FIRST
+from settings import POSTGRES_URL_SON
 
 
 Base = declarative_base()
-engine = create_engine(POSTGRES_URL_FIRST)
+engine = create_engine(POSTGRES_URL_SON)
 
 
 VideoLink = Table('video_link', Base.metadata,

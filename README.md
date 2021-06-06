@@ -11,6 +11,8 @@ Time for generate data: t = 12.380579471588135 seconds
 
 Time for generate and delivery data: t = 198.27464056015015 seconds
 
+![alt tag](github_data/plots.jpg "Описание будет тут")
+
 ## create_youtube_video_worker
 count vCPUs | RAM | count procces | count thread | speed | usage CPU 
 --- | --- | --- | --- | --- | ---
